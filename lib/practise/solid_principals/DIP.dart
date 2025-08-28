@@ -33,7 +33,7 @@
 // }
 
 ///Example no 1 is solved above
-
+///Service Interface
 abstract class Notifier{
   void notify(String data);
 }
@@ -61,10 +61,22 @@ class NotifierRepository{
   }
 }
 
-void main() {
-  NotifierRepository notifierRepository = NotifierRepository(SmsNotifier());
-  notifierRepository.notify('Ahsan');
+class Controller{
+  void showsms( ){
+    NotifierRepository notifierRepository = NotifierRepository(SmsNotifier());
 
-  NotifierRepository notifierRepository2 = NotifierRepository(EmailNotifier());
-  notifierRepository2.notify('Ali');
+    notifierRepository.notifier;
+  }
+
+  void showEmail( ){
+    NotifierRepository notifierRepository2 = NotifierRepository(EmailNotifier());
+    notifierRepository2.notify('Ali');
+  }
+
+}
+
+void main() {
+  Controller controller = Controller();
+  controller.showEmail();
+  controller.showsms();
 }

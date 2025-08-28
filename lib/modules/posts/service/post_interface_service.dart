@@ -1,6 +1,7 @@
+// post_repository_interface.dart
 import '../model/post.dart';
 
-abstract class PostServiceInterface {
+abstract class PostRepositoryInterface {
   Future<List<Post>> fetchPosts();
   Future<List<Post>> updatePosts();
 }

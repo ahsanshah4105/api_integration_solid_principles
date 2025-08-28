@@ -1,12 +1,15 @@
-import 'package:api_intergration_demo/modules/weather/interface/weather_interface.dart';
+import '../../../core/network/network_client.dart';
+import '../../../core/utils/api_url.dart';
 import '../service/weather_service.dart';
 
-class WeatherRepository{
-  final WeatherServiceInterface _interface;
-  WeatherRepository(this._interface);
+class WeatherRepository implements WeatherRepositoryInterface{
+  final HttpClientInterface _client;
 
+  WeatherRepository(this._client);
   @override
   Future getWeather([double? lat, double? lon]) async {
-   return await _interface.getWeather(23, 23) ;
+    final response = await _client.get(ApiUrl.urlWeather);
+    return response;
   }
 }
+
