@@ -1,46 +1,112 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
+import '../error/api_exceptions.dart';
+
+enum HttpMethod { get, post, put, delete, patch }
 
 abstract class HttpClientInterface {
   Future<dynamic> get(String url);
   Future<dynamic> put(String url, {Map<String, dynamic>? body});
+  Future<dynamic> fetchImage(String url);
+  Future<dynamic> uploadFile(String url, File file, {Map<String, dynamic>? fields});
+
 }
 
 class NetworkClient implements HttpClientInterface {
-  final http.Client client = http.Client();
+  final dio = Dio();
 
-  @override
-  Future<dynamic> get(String url) async {
-    final response = await http.get(
-      Uri.parse(url),
+  NetworkClient() {
+    dio.options = BaseOptions(
+      receiveDataWhenStatusError: true,
+      contentType: 'application/json',
+      sendTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
       headers: {'Accept': 'application/json', 'User-Agent': 'Dart/Flutter App'},
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Request failed with status: ${response.statusCode}');
+    /// ✅ Add interceptors here
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          print('➡ [REQUEST] ${options.method} ${options.uri}');
+          print('Headers: ${options.headers}');
+          print('Body: ${options.data}');
+          // Example: add token to headers dynamically
+          options.headers['Authorization'] = 'Bearer yourAuthToken';
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          print('✅ [RESPONSE] ${response.statusCode} ${response.requestOptions.uri}');
+          return handler.next(response);
+        },
+        onError: (DioException error, handler) {
+          print('❌ [ERROR] ${error.message}');
+          return handler.next(error);
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<dynamic> get(String url) async {
+    try {
+      final response = await dio.get(url);
+      return response.data;
+    } on DioException catch (error) {
+      throw ApiErrorHandler.handle(error);
+    } catch (error) {
+      throw ApiException('Unexpected error', originalError: error);
     }
   }
 
   @override
-  Future<dynamic> put(String url,  {Map<String, dynamic>? body}) async {
-    final response = await http.put(
-      Uri.parse(url),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Dart/Flutter App'
-      },
-      body: jsonEncode(body),
-    );
+  Future<dynamic> put(String url, {Map<String, dynamic>? body}) async {
+    try {
+      final response = await dio.put(url, data: body);
+      return response.data;
+    } on DioException catch (error) {
+      throw ApiErrorHandler.handle(error);
+    } catch (error) {
+      throw ApiException('Unexpected error', originalError: error);
+    }
+  }
+  @override
+  Future<Uint8List> fetchImage(String url) async {
+    try {
+      final response = await dio.get<List<int>>(
+        url,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      return Uint8List.fromList(response.data!);
+    } on DioException catch (error) {
+      throw ApiErrorHandler.handle(error);
+    } catch (error) {
+      throw ApiException('Unexpected error', originalError: error);
+    }
+  }
 
+  @override
+  Future uploadFile(String url, File file, {Map<String, dynamic>? fields}) async {
+    try {
+      String fileName = file.path.split('/').last;
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      return jsonResponse;
-    }else{
-      throw Exception('PUT request failed with status: ${response.statusCode}');
+      FormData formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(file.path, filename: fileName),
+        if (fields != null) ...fields,
+      });
+
+      final response = await dio.post(
+        url,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
+      return response.data;
+    } on DioException catch (error) {
+      throw ApiErrorHandler.handle(error);
+    } catch (error) {
+      throw ApiException('Unexpected error', originalError: error);
     }
   }
 }

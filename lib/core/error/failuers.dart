@@ -1,5 +1,5 @@
-
-
+// import 'package:dio/dio.dart';
+// import 'package:equatable/equatable.dart';
 //
 // class Failure extends Equatable {
 //   final String message;
@@ -9,7 +9,6 @@
 //   List<Object> get props => [message];
 // }
 //
-// // Represent failures from Server/Remote data source.
 // class RemoteFailure extends Failure {
 //   final DioExceptionType errorType;
 //
@@ -23,7 +22,6 @@
 //   List<Object> get props => [errorType];
 // }
 //
-// // Represent failures from Cache.
 // class LocalFailure extends Failure {
 //   final int error;
 //   final String? extraInfo;
