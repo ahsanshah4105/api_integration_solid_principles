@@ -7,13 +7,13 @@ import '../model/post.dart';
 import '../service/post_interface_service.dart';
 
 class PostRepository implements PostRepositoryInterface {
-  final HttpClientInterface _httpClient;
-  PostRepository(this._httpClient);
+  final HttpClientInterface httpClient;
+  PostRepository({required this.httpClient});
 
   @override
   Future<List<Post>> fetchPosts() async {
     try {
-      final response = await _httpClient.get(
+      final response = await httpClient.get(
           ApiUrl.posts,
           );
       return (response as List).map((json) => Post.fromJson(json)).toList();
@@ -26,7 +26,7 @@ class PostRepository implements PostRepositoryInterface {
   Future<List<Post>> updatePosts() async {
     const updateTitle = "Ehsan ali shah";
     try {
-      final response = await _httpClient.put(
+      final response = await httpClient.put(
         ApiUrl.updatePosts,
 
         body: {
@@ -45,7 +45,7 @@ class PostRepository implements PostRepositoryInterface {
   @override
   Future<dynamic> fetchImage() async {
     try{
-      final response = await _httpClient.get(ApiUrl.fetchImage);
+      final response = await httpClient.get(ApiUrl.fetchImage);
       return response;
     } catch (error) {
       throw ApiException('Failed to fetch posts ${error.toString()}');

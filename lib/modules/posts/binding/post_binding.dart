@@ -6,6 +6,6 @@ import 'package:get/get.dart';
 class PostBinding extends Bindings{
   @override
   void dependencies() {
-    Get.lazyPut(() => PostController(PostRepository(NetworkClient())));
+    Get.lazyPut(() => PostController(repository:  PostRepository(httpClient: NetworkClient())));
   }
 }

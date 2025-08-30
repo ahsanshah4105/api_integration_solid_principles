@@ -25,7 +25,6 @@ class NetworkClient implements HttpClientInterface {
       headers: {'Accept': 'application/json', 'User-Agent': 'Dart/Flutter App'},
     );
 
-    /// ✅ Add interceptors here
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {

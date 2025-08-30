@@ -7,7 +7,7 @@ class PostController extends GetxController {
   final PostRepositoryInterface repository;
   var fetchedImage = Rx<Image?>(null);
   var isLoading = false.obs;
-  PostController(this.repository);
+  PostController({required this.repository});
 
 
   Future<void> showPosts() async {

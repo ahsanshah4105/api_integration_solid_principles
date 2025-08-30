@@ -1,7 +1,7 @@
+import 'package:api_intergration_demo/modules/connectivity/views/ConnectivityScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'core/routes/app_pages.dart';
-import 'core/routes/app_routes.dart';
+import 'modules/connectivity/bindings/ConnectivityBinding.dart';
 
 void main() => runApp(const MyApp());
 
@@ -13,8 +13,13 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       useInheritedMediaQuery: true,
-      initialRoute: AppRoutes.postScreen,
-      getPages: AppPages.pages,
+      // initialRoute: AppRoutes.connectivityScreen,
+      // getPages: AppPages.pages,
+      initialBinding: ConnectivityBinding(),
+      home: ConnectivityScreen(),
+      theme: new ThemeData(
+        //primaryColor:
+      ),
     );
   }
 }

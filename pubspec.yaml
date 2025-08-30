@@ -38,6 +38,10 @@ dependencies:
   dio: ^5.9.0
   get: ^4.6.6
   equatable: ^2.0.7
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+  connectivity_plus: ^6.1.5
+
 
 
 dev_dependencies:
@@ -50,6 +54,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  freezed: ^3.2.0
+  json_serializable: 6.10.0
+  build_runner: ^2.4.0
+  flutter_gen_runner: ^5.11.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
