@@ -1,7 +1,6 @@
-import 'package:api_intergration_demo/modules/connectivity/controllers/connectivity_controller.dart';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:api_intergration_demo/core/utils/enums/connectivity.dart';
-import 'package:get/get.dart';
 
 class ConnectivityScreen extends StatefulWidget {
   const ConnectivityScreen({super.key});
@@ -11,26 +10,37 @@ class ConnectivityScreen extends StatefulWidget {
 }
 
 class _ConnectivityScreenState extends State<ConnectivityScreen> {
-
-  final ConnectivityController _connectivityController = Get.find<ConnectivityController>();
-
-
+  double height = 200, width = 200;
+  Color color = Colors.red;
   @override
   Widget build(BuildContext context) {
+    print("build ✅");
     return Scaffold(
-      appBar: AppBar(title: const Text('Connectivity Example')),
+      appBar: AppBar(title: const Text('Lifecycle Demo')),
       body: Center(
-        child: Obx(() {
-          switch (_connectivityController.status.value) {
-            case ConnectivityStatus.Wifi:
-              return Text("Connected via ${ConnectivityStatus.Wifi}",style: TextStyle(fontSize: 12, color: Colors.red.withValues(alpha: 1.0)),);
-            case ConnectivityStatus.Cellular:
-              return Text("Connected via ${ConnectivityStatus.Cellular}",style: TextStyle(fontSize: 12, color: Colors.red.withValues(alpha: 1.0)),);
-            case ConnectivityStatus.Offline:
-              return Text("${ConnectivityStatus.Offline}",style: TextStyle(fontSize: 12, color: Colors.grey.withValues(alpha: 1.0)),);
-          }
-        }),
-      ),
+        child: Column(
+          children: [
+            AnimatedContainer(
+              width:  width,
+              height: height,
+              color: color,
+              duration: Duration(seconds: 1),
+              clipBehavior: Clip.antiAlias,
+              curve: width == 200? Curves.bounceIn : Curves.easeIn,
+            ),
+            SizedBox(
+              height: 34,
+            ),
+            ElevatedButton(onPressed: () {
+              setState(() {
+                width = width == 300? 200 : 300;
+                height = height == 200? 300 : 200;
+                color = color == Colors.red? Colors.green : Colors.red;
+              });
+            }, child: Text('Tap'))
+          ],
+        ),
+      )
     );
   }
 }

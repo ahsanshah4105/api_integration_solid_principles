@@ -10,7 +10,11 @@ abstract class HttpClientInterface {
   Future<dynamic> put(String url, {Map<String, dynamic>? body});
   Future<dynamic> fetchImage(String url);
   Future<dynamic> uploadFile(String url, File file, {Map<String, dynamic>? fields});
-
+  Future<dynamic> query({
+    required String endpoint,
+    required String query,
+    Map<String, dynamic>? variables,
+  });
 }
 
 class NetworkClient implements HttpClientInterface {
@@ -102,6 +106,36 @@ class NetworkClient implements HttpClientInterface {
       );
 
       return response.data;
+    } on DioException catch (error) {
+      throw ApiErrorHandler.handle(error);
+    } catch (error) {
+      throw ApiException('Unexpected error', originalError: error);
+    }
+  }
+  
+  @override
+  Future<dynamic> query({
+    required String endpoint,
+    required String query,
+    Map<String, dynamic>? variables,
+  }) async {
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: {
+          'query': query,
+          'variables': variables ?? {},
+        },
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
+
+      if (response.data['errors'] != null) {
+        throw ApiException('GraphQL Error: ${response.data['errors']}');
+      }
+
+      return response.data['data'];
     } on DioException catch (error) {
       throw ApiErrorHandler.handle(error);
     } catch (error) {
